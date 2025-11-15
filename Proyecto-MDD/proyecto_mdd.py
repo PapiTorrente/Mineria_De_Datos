@@ -12,28 +12,38 @@ import pandas as pd
 # Import para escalar los datos y clustering.
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
+# Import para reducción de dimensiones
+from sklearn.decomposition import PCA
+# Import para 
+from sklearn.manifold import TSNE
 
 # LEER EL ARCHIVO
-print("Lectura del archivo.")
+print("\nLectura del archivo.")
 datos = pd.read_csv('muestra4s.csv')
 
 if datos is None:
     print("Error en la lectura del archivo.")
 else:
     print("Lectura de datos correcto.")
-    # Imprime cuantos datos hay en el archivo y cuáles.
-    print(datos.shape)
+    # Imprime cuántos datos hay en el archivo y cuáles.
+    print("Hay ", datos.shape, " datos de la dupla filas-columnas.")
+    print("\n\nCabeza del archivo.")
     print(datos.head())
 
-# Eliminar ID.
-ids = datos['id']
-datosnv = datos.drop('id',axis=1)
+print("\nResúmen Estadístico")
+print(datos.describe())
 
-# ESCALAR LOS DATOS
+# ESTANDARIZACIÓN Y ESCALADO
+# Necesario para la reducción de dimencionalidad con PCA para obtener la media cero
+# (Mu = 0) y su desviación estándar (sigma = 1).
 escalador = StandardScaler()
-datos_escalados = escalador.fit_transform(datosnv)
+datos_escalados = escalador.fit_transform(datos)
 
-print("Primeras 5 filas de los datos escalados:")
-print(pd.DataFrame(datos_escalados, columns=datosnv.columns).head())
-print("\nEstadísticas descriptivas de los datos escalados:")
-print(pd.DataFrame(datos_escalados).describe())
+print("\nCabeza de los datos escalados:")
+print(pd.DataFrame(datos_escalados, columns=datos.columns).head())
+
+# Modelos que requieren conocer K y reducción de Dimensionalidad
+# 4
+pca = PCA(n_components=4)
+componentes_principales = pca.fit_transform(datos_escalados)
+varianza_e = pca.explained_variance_ratio_
